@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+<!--
+  * Please see the included README.md file for license terms and conditions.
+  -->
+<head>
+    <title>WAY</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+
+    <!-- see http://webdesign.tutsplus.com/tutorials/htmlcss-tutorials/quick-tip-dont-forget-the-viewport-meta-tag -->
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=no">
+    <style>
+        /* following two viewport lines are equivalent to meta viewport statement above, needed for Windows */
+        /* see http://www.quirksmode.org/blog/archives/2014/05/html5_dev_conf.html and http://dev.w3.org/csswg/css-device-adapt/ */
+        @-ms-viewport { width: 100vw ; min-zoom: 100% ; zoom: 100% ; }  @viewport { width: 100vw ; min-zoom: 100% zoom: 100% ; }
+        @-ms-viewport { user-zoom: fixed ; min-zoom: 100% ; }           @viewport { user-zoom: fixed ; min-zoom: 100% ; }
+    </style>
+
+    <!-- Uncomment the following scripts if you convert your "Standard HTML5" project into a "Cordova" project. -->
+    <!-- <script src="cordova.js"></script> -->          <!-- phantom library, needed for Cordova api calls, added during build -->
+    <!-- <script src="js/app.js"></script> -->           <!-- recommended location of your JavaScript code relative to other JS files -->
+    <!-- <script src="xdk/init-dev.js"></script> -->     <!-- normalizes device and document ready events, see README for details -->
+</head>
+
+<body>
+
+    <div id="menu">
+        <img src="asset/Title.png" width="80%" style="display:block; margin-left:auto; margin-right:auto;"></img>
+
+        <!--<button><img src="asset/GameBut.png" width="30%" style="margin-top:30vh; margin-left:10vw;"></img></button>-->
+
+        <button id="GamemenuBut" width="30%"><img src="asset/GameBut.png" width="30%"></img></button>
+        <button id="ResultBut" width="30%"><img src="asset/ResultBut.png" width="30%"></img></button><br>
+        <button id="AboutBut" width="30%"><img src="asset/AboutBut.png" width="30%"></img></button><br>
+        <button id="OptionBut" width="30%"><img src="asset/OptionBut.png" width="30%"></img></button>
+    </div>
+    
+    <div id="about" style="display:none;">
+        <h1>About WAY</h1>
+        <p>This is an about page where some basic information about this game and what it is promoting.</p>
+        <button id="AboutBack" style="position:fixed; float: bottom">Back</button>
+    </div>
+
+    <div id="option" style="display:none;">
+        <button id="OptionBack" style="position:fixed; float: bottom;">Back</button>
+    </div>
+
+    <div id="result" style="display:none;">
+        <h1>You don't have a personality yet</h1>
+        <button id="ResultBack" style="position:fixed; float: bottom;">Back</button>
+    </div>
+
+    <div id="gamemenu" style="display:none;">
+        <h1>Games</h1>
+        <button id="GameOne"><img alt="Moving Block"></img></button>
+        <button id="GameBack" style="position:fixed; float: bottom;">Back</button>
+    </div>
+
+
+
+    <div id="JumpyBall" style="display:none;">
+        <h1>Moving Block</h1>
+        <p>In this game, you will have to move a block by pressing one half or the other, where left and right half are left and right movements respectively. Your objective is to get to the red square. If you die, you will respawn immediately. There are three levels total consecutively. Hope you enjoy!</p>
+        <button id="LevelOne">Start</button>
+    </div>
+    
+
+    <div id="One" style="display:none;">
+        <canvas id="myCanvas" style="margin:0; padding:0; overflow:none;"></canvas>
+    </div>
+    
+
+    <script>
+        var menuScreen = document.getElementById('menu');
+        
+        var gamemenuBut = document.getElementById('GamemenuBut');
+        var gamemenuScreen = document.getElementById('gamemenu');
+        var gameBack = document.getElementById('GameBack');
+        
+        var resultBut = document.getElementById('ResultBut');
+        var resultScreen = document.getElementById('result');
+        var resultBack = document.getElementById('ResultBack');
+        
+        var aboutBut = document.getElementById('AboutBut');
+        var aboutScreen = document.getElementById('about');
+        var aboutBack = document.getElementById('AboutBack');
+        
+        var optionBut = document.getElementById('OptionBut');
+        var optionScreen = document.getElementById('option');
+        var optionBack = document.getElementById('OptionBack');
+        
+        var gameOne = document.getElementById('GameOne');
+        var JumpyBallScreen = document.getElementById('JumpyBall');
+        
+        var levelOne = document.getElementById('LevelOne');
+        var jumpyOne = document.getElementById('One');
+        
+        
+        gamemenuBut.onclick = function() {
+            menuScreen.style.display = "none";
+            gamemenuScreen.style.display = "block";
+        }
+        
+        resultBut.onclick = function() {
+            if (instruction === null) {                  
+                resultScreen.innerHTML = "You don't have a personality yet...";
+            }
+            else if (instruction < 2000) {
+                if (shortcut.second === 0 || shortcut.third === 0) {
+                    resultScreen.innerHTML = "You are action-oriented and decisive. You do work fast and efficiently on a task given to you.";
+                }
+                else if (shortcut.second === 1 && shortcut.third === 1) {
+                    resultScreen.innerHTML = "Whatever you do, you finish quickly without too much planning.";
+                }
+            }
+            else if (instruction > 2000) {
+                if (shortcut.second === 0 || shortcut.third === 0) {
+                    resultScreen.innerHTML = "You are meticulous and attentive.";
+                }
+                else if (shortcut.second === 1 && shortcut.third === 1) {
+                    resultScreen.innerHTML = "You are careful yet creative and efficient after analyzing your task.";
+                }
+            }
+            
+            menuScreen.style.display = "none";
+            resultScreen.style.display = "block";
+        }
+        
+        aboutBut.onclick = function() {
+            menuScreen.style.display = "none";
+            aboutScreen.style.display = "block";
+        }
+        
+        optionBut.onclick = function() {
+            menuScreen.style.display = "none";
+            optionScreen.style.display = "block";
+        }
+        
+        aboutBack.onclick = function() {
+            menuScreen.style.display = "block";
+            aboutScreen.style.display = "none";
+        }
+        
+        optionBack.onclick = function() {
+            menuScreen.style.display = "block";
+            optionScreen.style.display = "none";
+        }
+        
+        resultBack.onclick = function() {
+            menuScreen.style.display = "block";
+            resultScreen.style.display = "none";
+        }
+        
+        gameBack.onclick = function() {
+            menuScreen.style.display = "block";
+            gamemenuScreen.style.display = "none";
+        }
+        
+        gameOne.onclick = function() {
+            startTime = new Date().getTime();
+            JumpyBallScreen.style.display = "block";
+            gamemenuScreen.style.display = "none";
+        }
+        
+        levelOne.onclick = function() {
+            closeTime = new Date().getTime();
+            instruction = closeTime - startTime;
+            shortcut.second = 0;
+            shortcut.third = 0;
+            jumpyOne.style.display = "block";
+            JumpyBallScreen.style.display = "none";
+            startAnimation(animationLoop);
+        }
+        
+                var canvas = document.getElementById("myCanvas");
+                var ctx = canvas.getContext("2d");
+                canvas.width = screen.width;
+                canvas.height = screen.height;
+                var x = screen.width/16;
+                var y = screen.height/24;
+                startAnimation(animationLoop);
+
+                var xpos = 4*x;
+                var ypos = 11*y;
+                var gravity = 2;
+                var mousePressed = 0;
+                var movingx;
+                var movingy;
+                var velocity; 
+
+                var instruction;
+                    var startTime;
+                    var closeTime;
+                var patience = {};
+                var shortcut = {second:0, third:0};
+                var curiosity;
+                    var deaths = 0;
+
+                var id;
+                function animationLoop(timeStamp) {
+                    // 1 - Clear
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    // 2 Draw
+                    ctx.fillRect(3*x, 12*y, 10*x, y);
+                    ctx.save();
+                    ctx.fillStyle="Grey";
+                    ctx.fillRect(xpos, ypos, x, y);
+                    ctx.restore();
+                    ctx.save();
+                    ctx.strokeStyle="#FF0000";
+                    ctx.strokeRect(11.5*x, 11*y, x, y);
+                    ctx.restore();
+                    // 3 Move
+                    gravity = 0.5*Math.pow(gravity,2);
+                    ypos += gravity;
+                    if (rectsOverlap(xpos, ypos, x, y, 3*x, 12*y, 10*x, 1)) {
+                        gravity = 0;
+                    }
+                    else {
+                        gravity = 4;
+                    }
+
+                    if (mousePressed === 1) {
+                        xpos += 3;             
+                    }
+                    else if (mousePressed === 2) {
+                        xpos -= 3;
+                    }
+                    else if (mousePressed === 0) {
+                        xpos += 0;
+                    }
+                    
+                    if (xpos > canvas.width || ypos > canvas.height) {
+                        xpos = 4*x;
+                        ypos = 11*y;
+                        deaths += 1;
+                    }
+
+                    if (rectsOverlap(xpos, ypos, x, y, 11.5*x, 11*y, x, y)) {
+                        stopAnimation();
+                        xpos = 3.5*x;
+                        ypos = 4*y;
+                        startAnimation(animationLoop2);
+                        return;
+                    }
+                    // call mainloop  again after 16.6ms (corresponds to 60 frames/second)
+                    id = requestAnimationFrame(animationLoop);
+                }
+
+                function startAnimation(animation) {
+                    id = requestAnimationFrame(animation);
+                }
+                
+                function stopAnimation() {
+                    if (id) {
+                        cancelAnimationFrame(id);
+                    }
+                }
+        
+        
+                function rectsOverlap(x1, y1, w1, h1, x2, y2, w2, h2) {
+                  if ((x1 > (x2 + w2)) || ((x1 + w1) < x2))
+                     return false; 
+                  if ((y1 > (y2 + h2)) || ((y1 + h1) < y2))
+                     return false;
+                  return true; 
+                }
+        
+                function collisionTest() {
+                    if (ypos + y === 12*y) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+
+                function getMousePos(canvas, event) {
+                    var rect = canvas.getBoundingClientRect();
+                    return {
+                        x: event.clientX,
+                        y: event.clientY
+                    };
+                }
+
+                canvas.addEventListener('mousedown', function(evt) {
+                    var mousePos = getMousePos(canvas, evt);
+                    if (mousePos.x > 8*x){
+                        mousePressed = 1;
+                    }
+
+                    if (mousePos.x < 8*x){
+                        mousePressed = 2;
+                    }
+                }, false);
+
+                canvas.addEventListener('mouseup', function() {
+                    mousePressed = 0;
+                }, false);
+
+
+        
+                function animationLoop2(timeStamp) {
+                    // 1 - Clear
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    // 2 Draw
+                    ctx.fillRect(3*x, 5*y, 4*x, y);
+                    ctx.save;
+                    ctx.fillRect(9*x, 10*y, 5*x, y);
+                    ctx.restore;
+                    ctx.save;
+                    ctx.fillRect(4*x, 16*y, 4*x, y);
+                    ctx.restore;
+                    ctx.save();
+                    ctx.fillStyle="Grey";
+                    ctx.fillRect(xpos, ypos, x, y);
+                    ctx.restore();
+                    ctx.save();
+                    ctx.strokeStyle="#FF0000";
+                    ctx.strokeRect(4*x, 15*y, x, y);
+                    ctx.restore();
+                    // 3 Move
+                    gravity = 0.5*Math.pow(gravity,2);
+                    ypos += gravity;
+                    if (rectsOverlap(xpos, ypos, x, y, 3*x, 5*y, 4*x, 1) || rectsOverlap(xpos, ypos, x, y, 9*x, 10*y, 5*x, 1) || rectsOverlap(xpos, ypos, x, y, 4*x, 16*y, 4*x, 1)) {
+                        gravity = 0;
+                    }
+                    else {
+                        gravity = 4;
+                    }
+
+                    if (mousePressed === 1) {
+                        xpos += 3;             
+                    }
+                    else if (mousePressed === 2) {
+                        xpos -= 3;
+                    }
+                    else if (mousePressed === 0) {
+                        xpos += 0;
+                    }
+                    
+                    if (rectsOverlap(xpos, ypos, x, y, 9*x, 10*y, 5*x, y)) {
+                        shortcut.second = 1;
+                    }
+                    
+                    if (xpos > canvas.width || ypos > canvas.height) {
+                        xpos = 3.5*x;
+                        ypos = 4*y;
+                        deaths += 1;
+                    }
+                    
+                    if (rectsOverlap(xpos, ypos, x, y, 4*x, 15*y, x, y)) {
+                        stopAnimation;
+                        xpos = 1.5*x;
+                        ypos = 3*y;
+                        movingx = 10*x;
+                        movingy = 4*y;
+                        velocity = -0.5;
+                        console.log(shortcut.second);
+                        startAnimation(animationLoop3);
+                        return;
+                    }
+                    // call mainloop  again after 16.6ms (corresponds to 60 frames/second)
+                    id = requestAnimationFrame(animationLoop2);
+                }
+        
+                function animationLoop3(timeStamp) {
+                    // 1 - Clear
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    // 2 Draw
+                    ctx.fillRect(x, 4*y, 4*x, y);
+                    ctx.save();
+                    ctx.fillRect(movingx, movingy, 2*x, y);
+                    ctx.restore();
+                    ctx.save();
+                    ctx.fillRect(9*x, 18*y, 6*x, y);
+                    ctx.restore();
+                    ctx.save();
+                    ctx.fillStyle="Grey";
+                    ctx.fillRect(xpos, ypos, x, y);
+                    ctx.restore();
+                    ctx.save();
+                    ctx.strokeStyle="#FF0000";
+                    ctx.strokeRect(14*x, 17*y, x, y);
+                    ctx.restore();
+                    // 3 Move
+                    gravity = 0.5*Math.pow(gravity,2);
+                    ypos += gravity;
+                    if (rectsOverlap(xpos, ypos, x, y, x, 4*y, 4*x, 1) || rectsOverlap(xpos, ypos, x, y, movingx, movingy, 2*x, 1) || rectsOverlap(xpos, ypos, x, y, 9*x, 18*y, 6*x, 1)) {
+                        gravity = 0;
+                    }
+                    else {
+                        gravity = 4;
+                    }
+                    
+                    movingx += velocity;
+                    
+                    if (movingx < 5*x) {
+                        velocity = -1*velocity;
+                    }
+                    else if (movingx > 10*x) {
+                        velocity = -1*velocity;
+                    }
+
+                    if (mousePressed === 1) {
+                        xpos += 3;             
+                    }
+                    else if (mousePressed === 2) {
+                        xpos -= 3;
+                    }
+                    else if (mousePressed === 0) {
+                        xpos += 0;
+                    }
+                    
+                    if (xpos > canvas.width || ypos > canvas.height) {
+                        xpos = 1.5*x;
+                        ypos = 3*y;
+                        deaths += 1;
+                    }
+                    
+                    if (rectsOverlap(xpos, ypos, x, y, movingx, movingy, 2*x, 1)) {
+                        shortcut.third = 1;
+                    }
+
+                    if (rectsOverlap(xpos, ypos, x, y, 14*x, 17*y, x, y)) {
+                        stopAnimation();
+                        xpos = 4*x;
+                        ypos = 11*y;                        
+                        jumpyOne.style.display = "none";
+                        menuScreen.style.display = "block";
+                        return;
+                    }
+                    // call mainloop  again after 16.6ms (corresponds to 60 frames/second)
+                    id = requestAnimationFrame(animationLoop3);
+                }
+    </script>
+</body>
+</html>
